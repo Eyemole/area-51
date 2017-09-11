@@ -66,7 +66,7 @@ window.onload = function() {
     //On receiveng a "out/muse/eeg/{i}" message, 
     //Move the i'th sphere
 
-    for (var i = 0; i < ADDRESSES[EEG_ADDR]; i++) {
+    for (let i = 0; i < ADDRESSES[EEG_ADDR]; i++) {
       socket.on(EEG_ADDR + i, function(data) {
           moveY(document.getElementById(CHANNEL_MAP[i]), data);
     });
