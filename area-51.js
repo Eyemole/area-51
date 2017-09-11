@@ -40,7 +40,7 @@ window.onload = function() {
 
     //Move one of the 4 spheres 
     function moveY(el, data) {
-      console.log(el);
+      console.log(data);
       var pos = el.getAttribute("position");
       var anim = el.getElementsByTagName('a-animation')[0];
       anim.setAttribute("from", pos);
@@ -66,10 +66,7 @@ window.onload = function() {
     //On receiveng a "out/muse/eeg/{i}" message, 
     //Move the i'th sphere
 
-    console.log(ADDRESSES[EEG_ADDR]);
-    
     for (var i = 0; i < ADDRESSES[EEG_ADDR]; i++) {
-      console.log(document.getElementById(CHANNEL_MAP[i]));
       socket.on(EEG_ADDR + i, function(data) {
           moveY(document.getElementById(CHANNEL_MAP[i]), data);
     });
