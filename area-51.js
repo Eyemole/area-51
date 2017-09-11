@@ -65,6 +65,9 @@ window.onload = function() {
     //Listen to messages from the eeg-connector server.
     //On receiveng a "out/muse/eeg/{i}" message, 
     //Move the i'th sphere
+
+    console.log(ADDRESSES[EEG_ADDR]);
+    
     for (var i = 0; i < ADDRESSES[EEG_ADDR]; i++) {
       console.log(document.getElementById(CHANNEL_MAP[i]));
       socket.on(EEG_ADDR + i, function(data) {
