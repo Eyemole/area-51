@@ -67,6 +67,7 @@ window.onload = function() {
     //Move the i'th sphere
     for (var i = 0; i < ADDRESSES[EEG_ADDR]; i++) {
       socket.on(EEG_ADDR + i, function(data) {
+          console.log(document.getElementById(CHANNEL_MAP[i]));
           moveY(document.getElementById(CHANNEL_MAP[i]), data);
     });
     }
