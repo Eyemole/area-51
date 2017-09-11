@@ -50,9 +50,10 @@ window.onload = function() {
     //Move one of the 4 spheres 
     function moveY(el, data) {
       var pos = el.getAttribute("position");
-      anim.setAttribute("from", pos);
+      //anim.setAttribute("from", pos);
       pos.y = data/EEG_RANGE*MAX_HEIGHT;
-      anim.setAttribute("to", pos);
+      //anim.setAttribute("to", pos);
+      el.setAttribute("position", pos);
     }
 
 
