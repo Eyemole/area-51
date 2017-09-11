@@ -45,7 +45,7 @@ window.onload = function() {
       anim.setAttribute("from", pos);
       pos.y = data/EEG_RANGE*MAX_HEIGHT;
       anim.setAttribute("to", pos);
-      //el.setAttribute("position", pos);
+      el.setAttribute("position", pos);
     }
 
     //Change the colour of the sky according to the GSR data
