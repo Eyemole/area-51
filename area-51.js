@@ -107,7 +107,7 @@ window.onload = function() {
     for (let i = 0; i < ADDRESSES[ALPHA_ADDR]; i++) {
       socket.on(ALPHA_ADDR + i, function(data) {
           updateAlpha(data, i);
-          changeOceanSpeed(alphas.reduce((a,b) => (a+b)) / alphas.length;)
+          changeOceanSpeed(alphas.reduce((a,b) => (a+b)) / alphas.length)
     });
     }
 
