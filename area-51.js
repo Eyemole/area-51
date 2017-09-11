@@ -40,6 +40,7 @@ window.onload = function() {
 
     //Move one of the 4 spheres 
     function moveY(el, data) {
+      console.log(el);
       var pos = el.getAttribute("position");
       var anim = el.getElementsByTagName('a-animation')[0];
       anim.setAttribute("from", pos);
