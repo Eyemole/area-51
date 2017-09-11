@@ -2,6 +2,7 @@ const EEG_MIN = 0;
 const EEG_MAX = 1200;
 const EEG_RANGE = EEG_MAX - EEG_MIN;
 const MAX_HEIGHT = 5;
+const GSR_MIN = 200;
 const GSR_MAX = 500;
 const B = 172;
 const G = 113;
@@ -46,18 +47,18 @@ window.onload = function() {
       anim.setAttribute("from", pos);
       pos.y = data/EEG_RANGE*MAX_HEIGHT;
       anim.setAttribute("to", pos);
-      el.setAttribute("position", pos);
+      //el.setAttribute("position", pos);
     }
 
     //Change the colour of the sky according to the GSR data
     function changeSkyColour(data) {
 
-      data = Math.min(GSR_MAX, data);
+      data = Math.max(Math.min(GSR_MAX, data), GSR_MIN);
       var sky = document.getElementsByTagName('a-sky')[0];
 
       //Amount of red in the sky is inversely proportional to the GSR value 
       //Low arousal = blue sky, high arousal = red sky 
-      var r = Math.floor(255 * (1 - data / GSR_MAX));
+      var r = Math.floor(100 + 155 * (1 - data / GSR_MAX));
       sky.setAttribute("color", "rgb(" + r + "," + G + "," + B + ")");;
     }
 
