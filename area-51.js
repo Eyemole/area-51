@@ -8,7 +8,7 @@ const G = 113;
 
 const EEG_ADDR = "out/muse/eeg/";
 const GSR_ADDR = "out/gsr/";
-var ADDRESSES = {EEG_ADDR: 4, GSR_ADDR: 1};
+var ADDRESSES = {"out/muse/eeg/": 4, "out/gsr/": 1};
 var CHANNEL_MAP = {0: "tp9", 1: "af7", 2: "af8", 3: "tp10"};
 
 window.onload = function() {
