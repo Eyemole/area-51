@@ -59,46 +59,6 @@ window.onload = function() {
     var socket = io("https://eeg-connector.herokuapp.com/" + sessionid).connect();
     console.log(socket);
 
-
-    //Move one of the 4 spheres 
-    function moveY(el, data, r) {
-      var pos = el.getAttribute("position");
-      pos.y = data/EEG_RANGE*MAX_HEIGHT;
-      pos.x = r * Math.cos(t * Math.PI / 180);
-      pos.z = r * Math.cos(t * Math.PI / 180);
-      el.setAttribute("position", pos);
-    }
-
-    //Turn off the sky when you're blinking
-    function blackenSky() {
-
-      var sky = document.getElementsByTagName('a-sky')[0];
-      sky.setAttribute("color", "#000");
-    }
-
-
-    //Change the colour of the sky according to the GSR data
-    function changeSkyColour() {
-
-      var sky = document.getElementsByTagName('a-sky')[0];
-
-      //Amount of red in the sky is inversely proportional to the GSR value 
-      //Low arousal = blue sky, high arousal = red sky 
-      var r = Math.floor(R + 155 * (1 - gsr / GSR_MAX));
-      sky.setAttribute("color", "rgb(" + r + "," + G + "," + B + ")");;
-    }
-
-
-    //Change the speed of the ocean according to absolute alpha values
-    function changeOceanSpeed(data) {
-
-      var ocean = document.getElementsByTagName('a-sky')[0];
-      var zscore = 1 - (data - ALPHA_MIN)/ (ALPHA_MAX - ALPHA_MIN);
-      ocean.setAttribute("speed", zscore * MAX_OCEAN_SPEED);
-      ocean.setAttribute("amplitude", zscore * MAX_OCEAN_AMPLITUDE);
-
-    }
-
     function updateAlpha(data, id) {
 
       data = Math.max(Math.min(ALPHA_MAX, data), ALPHA_MIN);
@@ -172,8 +132,48 @@ window.onload = function() {
     //Just turn off the sky
     socket.on(BLINK_ADDR + 0, function(data) {
           blink = true;
-          //blackenSky();
     });
+
+  }
+
+      //Move one of the 4 spheres 
+    function moveY(el, data, r) {
+      var pos = el.getAttribute("position");
+      pos.y = data/EEG_RANGE*MAX_HEIGHT;
+      pos.x = r * Math.cos(t * Math.PI / 180);
+      pos.z = r * Math.cos(t * Math.PI / 180);
+      el.setAttribute("position", pos);
+    }
+
+    //Turn off the sky when you're blinking
+    function blackenSky() {
+
+      var sky = document.getElementsByTagName('a-sky')[0];
+      sky.setAttribute("color", "#000");
+    }
+
+
+    //Change the colour of the sky according to the GSR data
+    function changeSkyColour() {
+
+      var sky = document.getElementsByTagName('a-sky')[0];
+
+      //Amount of red in the sky is inversely proportional to the GSR value 
+      //Low arousal = blue sky, high arousal = red sky 
+      var r = Math.floor(R + 155 * (1 - gsr / GSR_MAX));
+      sky.setAttribute("color", "rgb(" + r + "," + G + "," + B + ")");;
+    }
+
+
+    //Change the speed of the ocean according to absolute alpha values
+    function changeOceanSpeed(data) {
+
+      var ocean = document.getElementsByTagName('a-sky')[0];
+      var zscore = 1 - (data - ALPHA_MIN)/ (ALPHA_MAX - ALPHA_MIN);
+      ocean.setAttribute("speed", zscore * MAX_OCEAN_SPEED);
+      ocean.setAttribute("amplitude", zscore * MAX_OCEAN_AMPLITUDE);
+
+    }
 
     function render() {
 
@@ -198,10 +198,4 @@ window.onload = function() {
 
     requestAnimationFrame(render);
 
-
-    }
-
-
-
-  }
 }
