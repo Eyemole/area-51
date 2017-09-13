@@ -140,8 +140,8 @@ window.onload = function() {
     function moveY(el, data, r) {
       var pos = el.getAttribute("position");
       pos.y = data/EEG_RANGE*MAX_HEIGHT;
-      pos.x = r * Math.cos(t * Math.PI / 180);
-      pos.z = r * Math.cos(t * Math.PI / 180);
+      pos.x = r * Math.cos(currt * Math.PI / 180);
+      pos.z = r * Math.cos(currt * Math.PI / 180);
       el.setAttribute("position", pos);
     }
 
@@ -179,7 +179,7 @@ window.onload = function() {
 
         requestAnimationFrame(render);
 
-        currt = currt + 1;
+        currt = (currt + 1) % 360;
 
         for (let i = 0; i < ADDRESSES[EEG_ADDR]; i++) {
           moveY(document.getElementById(CHANNEL_MAP[i]), eeg[i], RADIUS_MAP[i]);
