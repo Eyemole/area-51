@@ -12,7 +12,7 @@ const MIN_OCEAN_AMPLITUDE = 0.01;
 const MAX_OCEAN_AMPLITUDE = 1;
 const B = 172;
 const G = 113;
-var R = 50;
+var R = 25;
 
 const MAX_LINE_LENGTH = 60;
 
@@ -153,12 +153,14 @@ window.onload = function() {
       pos.z = init_pos.z + r * Math.sin(currt * Math.PI / 180);
       el.setAttribute("position", pos);
 
+      var meshline = el.getElementsByTagName("*")[0];
+
       if (line.length >= MAX_LINE_LENGTH) {
         line = line.splice(1, line.length);
       }
 
       line.push(pos.x + " " + pos.y + " " + pos.z);
-      el.setAttribute("meshline", 'path: ' + line.toString() + "; lineWidth: 20");
+      meshline.setAttribute("meshline", 'path: ' + line.toString() + "; lineWidth: 10; color: 50c878");
     }
 
     //Turn off the sky when you're blinking
