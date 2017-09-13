@@ -12,7 +12,7 @@ const MIN_OCEAN_AMPLITUDE = 0.01;
 const MAX_OCEAN_AMPLITUDE = 1;
 const B = 172;
 const G = 113;
-var R = 100;
+var R = 50;
 
 const EEG_ADDR = "out/muse/eeg/";
 const ALPHA_ADDR = "out/muse/elements/alpha_absolute";
@@ -24,6 +24,7 @@ var ADDRESSES = {"out/muse/eeg/": 4, "out/muse/elements/alpha_absolute": 4, "out
  "out/muse/elements/theta_absolute": 4, "out/muse/elements/blink": 1, "out/gsr/": 1};
 var CHANNEL_MAP = {0: "tp9", 1: "af7", 2: "af8", 3: "tp10"};
 var RADIUS_MAP = {0: 4, 1: 2, 2: 3, 3: 5};
+var Y_MAP = {0: 1, 1: 2, 2: 2, 3: 1};
 
 var currt = 0;
 var alphas = [0, 0, 0, 0];
@@ -137,11 +138,13 @@ window.onload = function() {
   }
 
       //Move one of the 4 spheres 
-    function moveY(el, data, r) {
+    function moveY(el, data, r, y) {
       var pos = el.getAttribute("position");
-      pos.y = data/EEG_RANGE*MAX_HEIGHT;
+      if (data != 0 ) {
+      pos.y = y + data/EEG_RANGE*MAX_HEIGHT;
+    }
       pos.x = r * Math.cos(currt * Math.PI / 180);
-      pos.z = r * Math.cos(currt * Math.PI / 180);
+      pos.z = r * Math.sin(currt * Math.PI / 180);
       el.setAttribute("position", pos);
     }
 
@@ -182,7 +185,7 @@ window.onload = function() {
         currt = (currt + 1) % 360;
 
         for (let i = 0; i < ADDRESSES[EEG_ADDR]; i++) {
-          moveY(document.getElementById(CHANNEL_MAP[i]), eeg[i], RADIUS_MAP[i]);
+          moveY(document.getElementById(CHANNEL_MAP[i]), eeg[i], RADIUS_MAP[i], Y_MAP[i]);
         }
 
         changeOceanSpeed(alphas.reduce((a,b) => (a+b)) / alphas.length);
