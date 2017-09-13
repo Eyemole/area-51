@@ -14,6 +14,8 @@ const B = 172;
 const G = 113;
 var R = 50;
 
+const MAX_LINE_LENGTH = 60;
+
 const EEG_ADDR = "out/muse/eeg/";
 const ALPHA_ADDR = "out/muse/elements/alpha_absolute";
 const BETA_ADDR = "out/muse/elements/beta_absolute";
@@ -24,7 +26,9 @@ var ADDRESSES = {"out/muse/eeg/": 4, "out/muse/elements/alpha_absolute": 4, "out
  "out/muse/elements/theta_absolute": 4, "out/muse/elements/blink": 1, "out/gsr/": 1};
 var CHANNEL_MAP = {0: "tp9", 1: "af7", 2: "af8", 3: "tp10"};
 var RADIUS_MAP = {0: 4, 1: 2, 2: 3, 3: 5};
-var Y_MAP = {0: 1, 1: 2, 2: 2, 3: 1};
+var INIT_POS_MAP = {0: {x: -4, y:1 , z: 0} , 1: {x: 0, y: 2, z: -2},  2: {x: 0, y: 2, z: 3}, 3: {x: 5, y: 1, z:0 } };
+var LINE_MAP = {0: ["-4 1 0"], 1: ["0 2 -2"], 2: ["0 2 3"], 3: ["5 1 0"]};
+
 
 var currt = 0;
 var alphas = [0, 0, 0, 0];
@@ -138,14 +142,23 @@ window.onload = function() {
   }
 
       //Move one of the 4 spheres 
-    function moveY(el, data, r, y) {
+    function moveY(el, id) {
+      var data = eeg[id];
+      var r = RADIUS_MAP[id];
+      var init_pos = INIT_POS_MAP[id];
+      var line = LINE_MAP[id];
       var pos = el.getAttribute("position");
-      if (data != 0 ) {
-      pos.y = y + data/EEG_RANGE*MAX_HEIGHT;
-    }
-      pos.x = r * Math.cos(currt * Math.PI / 180);
-      pos.z = r * Math.sin(currt * Math.PI / 180);
+      pos.y = init_pos.y + data/EEG_RANGE*MAX_HEIGHT;
+      pos.x = init_pos.x + r * Math.cos(currt * Math.PI / 180);
+      pos.z = init+pos.z + r * Math.sin(currt * Math.PI / 180);
       el.setAttribute("position", pos);
+
+      if (line.length >= MAX_LINE_LENGTH) {
+        line = line.splice(1, line.length);
+      }
+
+      line.push(pos.x + " " + pos.y + " " + pos.z);
+      el.setAttribute("meshline", 'path: ' + line.toString() + "; lineWidth: 20");
     }
 
     //Turn off the sky when you're blinking
@@ -185,7 +198,7 @@ window.onload = function() {
         currt = (currt + 1) % 360;
 
         for (let i = 0; i < ADDRESSES[EEG_ADDR]; i++) {
-          moveY(document.getElementById(CHANNEL_MAP[i]), eeg[i], RADIUS_MAP[i], Y_MAP[i]);
+          moveY(document.getElementById(CHANNEL_MAP[i]), i);
         }
 
         changeOceanSpeed(alphas.reduce((a,b) => (a+b)) / alphas.length);
