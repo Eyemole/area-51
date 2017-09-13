@@ -150,7 +150,7 @@ window.onload = function() {
       var pos = el.getAttribute("position");
       pos.y = init_pos.y + data/EEG_RANGE*MAX_HEIGHT;
       pos.x = init_pos.x + r * Math.cos(currt * Math.PI / 180);
-      pos.z = init+pos.z + r * Math.sin(currt * Math.PI / 180);
+      pos.z = init_pos.z + r * Math.sin(currt * Math.PI / 180);
       el.setAttribute("position", pos);
 
       if (line.length >= MAX_LINE_LENGTH) {
