@@ -2,23 +2,36 @@ const EEG_MIN = 0;
 const EEG_MAX = 1200;
 const EEG_RANGE = EEG_MAX - EEG_MIN;
 const MAX_HEIGHT = 5;
-const GSR_MIN = 200;
+const GSR_MIN = 100;
 const GSR_MAX = 500;
-const ALPHA_MIN = 0.01;
+const ALPHA_MIN = -1;
 const ALPHA_MAX = 2;
-const MAX_OCEAN_SPEED = 10;
 const MIN_OCEAN_SPEED = 0.1;
+const MAX_OCEAN_SPEED = 10;
+const MIN_OCEAN_AMPLITUDE = 0.01;
+const MAX_OCEAN_AMPLITUDE = 1;
 const B = 172;
 const G = 113;
+var R = 100;
 
 const EEG_ADDR = "out/muse/eeg/";
 const ALPHA_ADDR = "out/muse/elements/alpha_absolute";
+const BETA_ADDR = "out/muse/elements/beta_absolute";
+const THETA_ADDR = "out/muse/elements/theta_absolute";
 const BLINK_ADDR = "out/muse/elements/blink";
 const GSR_ADDR = "out/gsr/";
 var ADDRESSES = {"out/muse/eeg/": 4, "out/muse/elements/alpha_absolute": 4, "out/muse/elements/beta_absolute": 4,
  "out/muse/elements/theta_absolute": 4, "out/muse/elements/blink": 1, "out/gsr/": 1};
 var CHANNEL_MAP = {0: "tp9", 1: "af7", 2: "af8", 3: "tp10"};
+var RADIUS_MAP = {0: 4, 1: 2, 2: 3, 3: 5};
+
+var currt = 0;
 var alphas = [0, 0, 0, 0];
+var betas = [0, 0, 0, 0];
+var thetas = [0, 0, 0, 0];
+var eeg = [0, 0, 0, 0];
+var blink = false;
+var gsr = 0;
 
 window.onload = function() {
 
@@ -48,14 +61,13 @@ window.onload = function() {
 
 
     //Move one of the 4 spheres 
-    function moveY(el, data) {
+    function moveY(el, data, r) {
       var pos = el.getAttribute("position");
-      //anim.setAttribute("from", pos);
       pos.y = data/EEG_RANGE*MAX_HEIGHT;
-      //anim.setAttribute("to", pos);
+      pos.x = r * Math.cos(t * Math.PI / 180);
+      pos.z = r * Math.cos(t * Math.PI / 180);
       el.setAttribute("position", pos);
     }
-
 
     //Turn off the sky when you're blinking
     function blackenSky() {
@@ -64,15 +76,15 @@ window.onload = function() {
       sky.setAttribute("color", "#000");
     }
 
-    //Change the colour of the sky according to the GSR data
-    function changeSkyColour(data) {
 
-      data = Math.max(Math.min(GSR_MAX, data), GSR_MIN);
+    //Change the colour of the sky according to the GSR data
+    function changeSkyColour() {
+
       var sky = document.getElementsByTagName('a-sky')[0];
 
       //Amount of red in the sky is inversely proportional to the GSR value 
       //Low arousal = blue sky, high arousal = red sky 
-      var r = Math.floor(100 + 155 * (1 - data / GSR_MAX));
+      var r = Math.floor(R + 155 * (1 - gsr / GSR_MAX));
       sky.setAttribute("color", "rgb(" + r + "," + G + "," + B + ")");;
     }
 
@@ -81,7 +93,9 @@ window.onload = function() {
     function changeOceanSpeed(data) {
 
       var ocean = document.getElementsByTagName('a-sky')[0];
-      ocean.setAttribute("speed", data / (ALPHA_MAX - ALPHA_MIN) * MAX_OCEAN_SPEED)
+      var zscore = 1 - (data - ALPHA_MIN)/ (ALPHA_MAX - ALPHA_MIN);
+      ocean.setAttribute("speed", zscore * MAX_OCEAN_SPEED);
+      ocean.setAttribute("amplitude", zscore * MAX_OCEAN_AMPLITUDE);
 
     }
 
@@ -91,13 +105,37 @@ window.onload = function() {
       alphas[id] = data;
     }
 
+    function updateBeta(data, id) {
+
+      data = Math.max(Math.min(ALPHA_MAX, data), ALPHA_MIN);
+      betas[id] = data;
+    }
+
+   function updateTheta(data, id) {
+
+      data = Math.max(Math.min(ALPHA_MAX, data), ALPHA_MIN);
+      thetas[id] = data;
+    }
+
+    function updateEEG(data, id) {
+
+      data = Math.max(Math.min(EEG_MAX, data), EEG_MIN);
+      eeg[id] = data;
+    }
+
+    function updateGSR(data) {
+
+      gsr = Math.max(Math.min(GSR_MAX, data), GSR_MIN);
+
+    }
+
     //Listen to messages from the eeg-connector server.
     //On receiveng a "out/muse/eeg/{i}" message, 
     //Move the i'th sphere
 
     for (let i = 0; i < ADDRESSES[EEG_ADDR]; i++) {
       socket.on(EEG_ADDR + i, function(data) {
-          moveY(document.getElementById(CHANNEL_MAP[i]), data);
+          updateEEG(data, i);
     });
     }
 
@@ -108,22 +146,62 @@ window.onload = function() {
     for (let i = 0; i < ADDRESSES[ALPHA_ADDR]; i++) {
       socket.on(ALPHA_ADDR + i, function(data) {
           updateAlpha(data, i);
-          changeOceanSpeed(alphas.reduce((a,b) => (a+b)) / alphas.length)
+    });
+    }
+
+    for (let i = 0; i < ADDRESSES[BETA_ADDR]; i++) {
+      socket.on(BETA_ADDR + i, function(data) {
+          updateBeta(data, i);
+    });
+    }
+
+    for (let i = 0; i < ADDRESSES[THETA_ADDR]; i++) {
+      socket.on(THETA_ADDR + i, function(data) {
+          updateTheta(data, i);
     });
     }
 
     //On receiveng a "out/gsr" message, 
     //Update the sky colour
     socket.on(GSR_ADDR + 0, function(data) {
-          changeSkyColour(data);
+          updateGSR(data);
     });
 
 
     //On receiveng a "out/muse/elements/blink/0" message, 
     //Just turn off the sky
     socket.on(BLINK_ADDR + 0, function(data) {
-          blackenSky();
+          blink = true;
+          //blackenSky();
     });
+
+    function render() {
+
+        requestAnimationFrame(render);
+
+        currt = currt + 1;
+
+        for (let i = 0; i < ADDRESSES[EEG_ADDR]; i++) {
+          moveY(document.getElementById(CHANNEL_MAP[i]), eeg[i], RADIUS_MAP[i]);
+        }
+
+        changeOceanSpeed(alphas.reduce((a,b) => (a+b)) / alphas.length);
+
+        changeSkyColour();
+
+        if (blink) {
+          blackenSky();
+          blink = false;
+        }
+
+    }
+
+    requestAnimationFrame(render);
+
+
+    }
+
+
 
   }
 }
