@@ -14,6 +14,8 @@ const B = 172;
 const G = 113;
 var R = 25;
 
+const LIGHTNING_TIME = 5;
+
 const MAX_LINE_LENGTH = 180;
 
 const EEG_ADDR = "out/muse/eeg/";
@@ -27,16 +29,21 @@ var ADDRESSES = {"out/muse/eeg/": 4, "out/muse/elements/alpha_absolute": 4, "out
 var CHANNEL_MAP = {0: "tp9", 1: "af7", 2: "af8", 3: "tp10"};
 var RADIUS_MAP = {0: 4, 1: 2, 2: 3, 3: 5};
 var INIT_POS_MAP = {0: {x: -4, y:1 , z: 0} , 1: {x: 0, y: 2, z: -2},  2: {x: 0, y: 2, z: 3}, 3: {x: 5, y: 1, z:0 } };
-var LINE_MAP = {0: ["-4 1 0"], 1: ["0 2 -2"], 2: ["0 2 3"], 3: ["5 1 0"]};
+var LINE_MAP = {0: [], 1: [], 2: [], 3: []};
 
 
 var currt = 0;
 var alphas = [0, 0, 0, 0];
+var alpha_avg = 0;
 var betas = [0, 0, 0, 0];
+var beta_avg = 0;
+var curr_avg = 0;
 var thetas = [0, 0, 0, 0];
+var theta_avg = 0;
 var eeg = [0, 0, 0, 0];
 var blink = false;
 var gsr = 0;
+var lightning_wait_count = 0;
 
 window.onload = function() {
 
@@ -160,7 +167,7 @@ window.onload = function() {
       }
 
       line.push(pos.x + " " + pos.y + " " + pos.z);
-      meshline.setAttribute("meshline", 'path: ' + line.toString() + "; lineWidth: 10; color: 50c878");
+      meshline.setAttribute("meshline", 'path: ' + line.toString() + "; lineWidth: 10; color: #50c878");
     }
 
     //Turn off the sky when you're blinking
@@ -193,11 +200,35 @@ window.onload = function() {
 
     }
 
+    function strikeLightning() {
+
+      var lightning = document.getElementByID('lightning');
+      lightning.setAttribute("visible", true);
+      lightning_wait_count = LIGHTNING_TIME;
+
+    }
+
+    function unstrikeLightning() {
+
+      var lightning = document.getElementByID('lightning');
+      lightning.setAttribute("visible", false);
+      lightning_wait_count = 0;
+
+    }
+
+
+
+    function updateBetaAvg() {
+      curr_avg = betas.reduce((a,b) => (a+b)) / betas.length;
+      beta_avg = beta_avg*(currt - 1) / currt + curr_avg / currt;
+    }
+
     function render() {
 
         requestAnimationFrame(render);
 
-        currt = (currt + 1) % 360;
+        currt = currt + 1;
+        updateBetaAvg();
 
         for (let i = 0; i < ADDRESSES[EEG_ADDR]; i++) {
           moveY(document.getElementById(CHANNEL_MAP[i]), i);
@@ -210,6 +241,16 @@ window.onload = function() {
         if (blink) {
           blackenSky();
           blink = false;
+        }
+
+        if (curr_avg <= (0.8 * beta_avg)) {
+          strikeLightning();
+        }
+
+        if (lightning_wait_count > 1) {
+          lightning_wait_count = lightning_wait_count - 1;
+        } else if (lightning_wait_count == 1) {
+          unstrikeLightning();
         }
 
     }
