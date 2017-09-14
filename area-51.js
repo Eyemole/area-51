@@ -203,7 +203,7 @@ window.onload = function() {
 
     function strikeLightning() {
 
-      var lightning = document.getElementByID('lightning');
+      var lightning = document.getElementById('lightning');
       lightning.setAttribute("visible", true);
       lightning_wait_count = LIGHTNING_TIME;
 
@@ -244,7 +244,7 @@ window.onload = function() {
           blink = false;
         }
 
-        if (curr_avg <= (5 * beta_avg)) {
+        if (curr_avg <= (0.8 * beta_avg)) {
           strikeLightning();
         }
 
