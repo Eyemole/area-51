@@ -244,7 +244,7 @@ window.onload = function() {
           blink = false;
         }
 
-        if (curr_avg <= (0.8 * beta_avg)) {
+        if (curr_avg <= (5 * beta_avg)) {
           strikeLightning();
         }
 
