@@ -211,7 +211,7 @@ window.onload = function() {
 
     function unstrikeLightning() {
 
-      var lightning = document.getElementByID('lightning');
+      var lightning = document.getElementById('lightning');
       lightning.setAttribute("visible", false);
       lightning_wait_count = 0;
 
