@@ -19,13 +19,13 @@ const LIGHTNING_TIME = 5;
 const MAX_LINE_LENGTH = 180;
 
 const EEG_ADDR = "out/muse/eeg/";
-const ALPHA_ADDR = "out/muse/elements/alpha_absolute";
-const BETA_ADDR = "out/muse/elements/beta_absolute";
-const THETA_ADDR = "out/muse/elements/theta_absolute";
-const BLINK_ADDR = "out/muse/elements/blink";
+const ALPHA_ADDR = "out/muse/elements/alpha_absolute/";
+const BETA_ADDR = "out/muse/elements/beta_absolute/";
+const THETA_ADDR = "out/muse/elements/theta_absolute/";
+const BLINK_ADDR = "out/muse/elements/blink/";
 const GSR_ADDR = "out/gsr/";
-var ADDRESSES = {"out/muse/eeg/": 4, "out/muse/elements/alpha_absolute": 4, "out/muse/elements/beta_absolute": 4,
- "out/muse/elements/theta_absolute": 4, "out/muse/elements/blink": 1, "out/gsr/": 1};
+var ADDRESSES = {"out/muse/eeg/": 4, "out/muse/elements/alpha_absolute/": 4, "out/muse/elements/beta_absolute/": 4,
+ "out/muse/elements/theta_absolute/": 4, "out/muse/elements/blink/": 1, "out/gsr/": 1};
 var CHANNEL_MAP = {0: "tp9", 1: "af7", 2: "af8", 3: "tp10"};
 var RADIUS_MAP = {0: 4, 1: 2, 2: 3, 3: 5};
 var INIT_POS_MAP = {0: {x: -4, y:1 , z: 0} , 1: {x: 0, y: 2, z: -2},  2: {x: 0, y: 2, z: 3}, 3: {x: 5, y: 1, z:0 } };
