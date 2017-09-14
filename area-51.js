@@ -167,6 +167,7 @@ window.onload = function() {
       }
 
       line.push(pos.x + " " + pos.y + " " + pos.z);
+      LINE_MAP[id] = line;
       meshline.setAttribute("meshline", 'path: ' + line.toString() + "; lineWidth: 10; color: #50c878");
     }
 
