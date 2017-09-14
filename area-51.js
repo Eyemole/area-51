@@ -14,7 +14,7 @@ const B = 172;
 const G = 113;
 var R = 25;
 
-const MAX_LINE_LENGTH = 60;
+const MAX_LINE_LENGTH = 180;
 
 const EEG_ADDR = "out/muse/eeg/";
 const ALPHA_ADDR = "out/muse/elements/alpha_absolute";
