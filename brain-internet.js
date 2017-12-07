@@ -1,4 +1,4 @@
-import { MuseClient } from 'muse-js';
+vr MuseClient = require('muse-js');
 
 const EEG_MIN = 0;
 const EEG_MAX = 1200;
