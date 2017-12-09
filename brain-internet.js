@@ -1,5 +1,4 @@
-var MuseClient = require('muse-js');
-
+import {MuseClient} from 'https://unpkg.com/muse-js@1.0.0/dist/muse.js';
 const EEG_MIN = 0;
 const EEG_MAX = 1200;
 const EEG_RANGE = EEG_MAX - EEG_MIN;
